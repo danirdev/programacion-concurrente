@@ -1,4 +1,4 @@
-package ejemplopool;
+package tp8.ejemplopool;
 import java.util.concurrent.TimeUnit;
 
 public class TareaRunnable implements Runnable {
