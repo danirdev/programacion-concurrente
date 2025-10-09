@@ -20,12 +20,14 @@ class EmpleadoVuelveIndividual extends Thread {
             
             // Habilitar la cabina
             cabinaCerrada.setDisponible(true);
-            semaforoGeneral.release(); // Libera un permiso adicional
-            
-            System.out.println(">>> El empleado volvió del baño, CABINA " 
-                             + cabinaCerrada.getNumeroCabina() + " está disponible nuevamente");
+
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            System.out.println(">>> El empleado volvió del baño, CABINA " 
+                             + cabinaCerrada.getNumeroCabina() 
+                             + " está disponible nuevamente");
+            semaforoGeneral.release(); // Libera un permiso adicional
         }
     }
 }

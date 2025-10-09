@@ -18,12 +18,15 @@ class ClientePeajeIndividual extends Thread {
     
     @Override
     public void run() {
+        Cabina cabinaAsignada = null;
+        boolean semaforoAdquirido = false;
+        
         try {
             // Esperar a que haya alguna cabina disponible
             semaforoGeneral.acquire();
+            semaforoAdquirido = true;
             
             // Buscar una cabina disponible
-            Cabina cabinaAsignada = null;
             while (cabinaAsignada == null) {
                 for (Cabina cabina : cabinas) {
                     if (cabina.isDisponible() && cabina.getMutex().tryAcquire()) {
@@ -48,12 +51,17 @@ class ClientePeajeIndividual extends Thread {
             System.out.println("Cliente " + numeroCliente + " finaliza su atención en CABINA " 
                              + cabinaAsignada.getNumeroCabina());
             
-            // Libera la cabina específica y el semáforo general
-            cabinaAsignada.getMutex().release();
-            semaforoGeneral.release();
-            
         } catch (InterruptedException e) {
             e.printStackTrace();
+            Thread.currentThread().interrupt();
+        } finally {
+            // Libera los recursos en orden inverso al que fueron adquiridos
+            if (cabinaAsignada != null) {
+                cabinaAsignada.getMutex().release();
+            }
+            if (semaforoAdquirido) {
+                semaforoGeneral.release();
+            }
         }
     }
 }
